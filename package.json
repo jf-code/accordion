@@ -1,0 +1,30 @@
+{
+    "name": "@jf-code/accordion",
+    "version": "1.0.0",
+    "description": "Accordion component",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "webpack --env.production",
+        "start": "webpack-dev-server --open --env.development"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/core": "^7.7.5",
+        "@babel/preset-env": "7.7.4",
+        "autoprefixer": "^9.7.3",
+        "babel-loader": "^8.0.6",
+        "babel-preset-env": "^1.7.0",
+        "css-loader": "^3.2.1",
+        "cssnano": "^4.1.10",
+        "html-webpack-plugin": "^3.2.0",
+        "node-sass": "^4.13.0",
+        "postcss-loader": "^3.0.0",
+        "sass-loader": "^8.0.0",
+        "style-loader": "^1.0.1",
+        "terser-webpack-plugin": "^2.2.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0"
+    }
+}

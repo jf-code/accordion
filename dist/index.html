@@ -1,0 +1,39 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Accordion</title>
+    </head>
+    <body>
+        <div id="accordion">
+            <a class="accordion__trigger" href="#1">First item</a>
+            <div class="accordion__content-wrapper" id="1">First item content</div>
+            <a class="accordion__trigger" href="#1">Second item</a>
+            <div class="accordion__content-wrapper" id="1">Second item content</div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let instance = new Accordion('#accordion', {
+                    selectors: {
+                        trigger: '.accordion__trigger',
+                        content: '.accordion__content-wrapper',
+                        activeTrigger: '.accordion__trigger.is-open',
+                        activeContent: '.accordion__content-wrapper.is-open'
+                    },
+                    classes: {
+                        trigger: 'accordion__trigger',
+                        content: 'accordion__content-wrapper',
+                        active: 'is-active'
+                    },
+                    active: false,
+                    expandable: false,
+                    callbacks: {},
+                    errorMessages: {}
+                });
+                // initialize
+                instance.init();
+            });
+        </script>
+    <script type="text/javascript" src="index.js"></script></body>
+</html>

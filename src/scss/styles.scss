@@ -1,0 +1,36 @@
+@charset "utf-8";
+/**
+ * Capitan accordion.scss v1.0.0
+ *
+ * Copyright brandung GmbH & Co.KG
+ * http://www.brandung.de/
+ *
+ * Date: 2016-06-23
+ * MIT License (MIT)
+ */
+
+$component: 'accordion';
+
+// block
+%#{$component} {
+    box-sizing: border-box;
+}
+
+// element
+.#{$component}__content-wrapper {
+    transition: max-height 0.25s ease;
+    will-change: max-height;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.#{$component}__trigger {
+    cursor: pointer;
+}
+
+// modifier
+
+// component class selector
+.#{$component} {
+    @extend %#{$component};
+}
