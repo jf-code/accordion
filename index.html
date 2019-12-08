@@ -6,27 +6,23 @@
         <title>Accordion</title>
     </head>
     <body>
-        <div id="accordion">
-            <a class="accordion__trigger" href="#1">First item</a>
-            <div class="accordion__content-wrapper" id="1">First item content</div>
-            <a class="accordion__trigger" href="#1">Second item</a>
-            <div class="accordion__content-wrapper" id="1">Second item content</div>
+        <div class="accordion">
+            <a class="accordion__trigger" href="#" data-target="item-1">First item</a>
+            <div class="accordion__content" id="item-1">First item content</div>
+            <a class="accordion__trigger" href="#" data-target="item-2">Second item</a>
+            <div class="accordion__content" id="item-2">Second item content</div>
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                let instance = new Accordion('#accordion', {
+                let instance = new Accordion('.accordion', {
                     selectors: {
                         trigger: '.accordion__trigger',
-                        content: '.accordion__content-wrapper',
-                        activeTrigger: '.accordion__trigger.is-open',
-                        activeContent: '.accordion__content-wrapper.is-open'
+                        content: '.accordion__content'
                     },
                     classes: {
-                        trigger: 'accordion__trigger',
-                        content: 'accordion__content-wrapper',
                         active: 'is-active'
                     },
-                    active: false,
+                    active: -1,
                     expandable: false,
                     callbacks: {},
                     errorMessages: {}

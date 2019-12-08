@@ -1,9 +1,31 @@
+// import utils
+import { mergeDeep } from '../utils/mergeDeep';
+
+// set defaults
+const defaultOptions = {
+    selectors: {
+        trigger: '.accordion__trigger',
+        content: '.accordion__content'
+    },
+    classes: {
+        active: 'is-active'
+    },
+    active: -1,
+    expandable: false,
+    callbacks: {},
+    errorMessages: {}
+};
+
 // return Accordion class
 export class Accordion {
     constructor(elem, options) {
         this.elem = elem;
-        this.options = options;
+        this.options = defaultOptions;
         this.initialized = false;
+
+        if (options) {
+            this.options = mergeDeep(this.options, options);
+        }
     }
     // initialize plugin
     init() {
@@ -22,49 +44,32 @@ export class Accordion {
         this.initialized = true;
     }
     /**
-     * open or close elements
-     * @param trigger
+     * prepare accordion
      * @param accordion
      */
-    triggerContent(trigger, accordion) {
-        const triggers = accordion.querySelectorAll(this.options.selectors.trigger);
+    prepareAccordion(accordion) {
         const contents = accordion.querySelectorAll(this.options.selectors.content);
-        let content = trigger.accordionContent;
+        const triggers = accordion.querySelectorAll(this.options.selectors.trigger);
+        let content = {};
 
-        if (content) {
-            if (!trigger.classList.contains('is-open')) {
-                // if only one at a time should be open, close the other ones
-                if (this.options.expandable === false) {
-                    for (let i = 0; i < triggers.length; i += 1) {
-                        triggers[i].classList.remove('is-open');
-                    }
-
-                    for (let i = 0; i < contents.length; i += 1) {
-                        contents[i].classList.remove('is-open');
-                        contents[i].style.maxHeight = '0';
-                    }
-                }
-
-                trigger.classList.add('is-open');
-                content.classList.add('is-open');
-                content.style.maxHeight = `${content.scrollHeight}px`;
-            } else {
-                // if item was already active -> close it
-                trigger.classList.remove('is-open');
-                content.classList.remove('is-open');
-                content.style.maxHeight = '0';
-            }
+        // activate a specific accordion by index
+        if (this.options.active >= 0 && triggers[this.options.active] && contents[this.options.active]) {
+            triggers[this.options.active].classList.add(this.options.classes.active);
+            contents[this.options.active].classList.add(this.options.classes.active);
+            contents[this.options.active].style.maxHeight = 'none';
         }
-    }
-    /**
-     * handle resize Events
-     */
-    handleResize() {
-        const activeItems = document.querySelectorAll(this.options.selectors.activeContent);
 
-        // resize open accordion items
-        for (let i = 0; i < activeItems.length; i += 1) {
-            activeItems[i].style.maxHeight = `${activeItems[i].scrollHeight}px`;
+        for (let i = 0; i < triggers.length; i += 1) {
+            const triggerTarget = triggers[i].dataset.target;
+
+            // if content is next dom element
+            if (triggerTarget) {
+                content = document.getElementById(triggerTarget);
+            } else {
+                content = triggers[i].nextElementSibling;
+            }
+
+            triggers[i].accordionContent = content;
         }
     }
     /**
@@ -89,29 +94,49 @@ export class Accordion {
         this.triggerContent(event.currentTarget, accordion);
     }
     /**
-     * prepare accordion
+     * open or close elements
+     * @param trigger
      * @param accordion
      */
-    prepareAccordion(accordion) {
-        const contents = accordion.querySelectorAll(this.options.selectors.content);
+    triggerContent(trigger, accordion) {
         const triggers = accordion.querySelectorAll(this.options.selectors.trigger);
-        let content = {};
+        const contents = accordion.querySelectorAll(this.options.selectors.content);
+        let content = trigger.accordionContent;
 
-        // activate a specific accordion by index
-        if (this.options.active !== false) {
-            triggers[this.options.active].classList.add('is-open');
-            contents[this.options.active].classList.add('is-open');
-            contents[this.options.active].style.maxHeight = 'none';
-        }
+        if (content) {
+            if (!trigger.classList.contains(this.options.classes.active)) {
+                // if only one at a time should be open, close the other ones
+                if (this.options.expandable === false) {
+                    for (let i = 0; i < triggers.length; i += 1) {
+                        triggers[i].classList.remove(this.options.classes.active);
+                    }
 
-        for (let i = 0; i < triggers.length; i += 1) {
-            content = triggers[i].nextElementSibling;
+                    for (let i = 0; i < contents.length; i += 1) {
+                        contents[i].classList.remove(this.options.classes.active);
+                        contents[i].style.maxHeight = '0';
+                    }
+                }
 
-            // if content is next dom element
-            if (!content) {
-                content = triggers[i].nextElementSibling;
+                trigger.classList.add(this.options.classes.active);
+                content.classList.add(this.options.classes.active);
+                content.style.maxHeight = `${content.scrollHeight}px`;
+            } else {
+                // if item was already active -> close it
+                trigger.classList.remove(this.options.classes.active);
+                content.classList.remove(this.options.classes.active);
+                content.style.maxHeight = '0';
             }
-            triggers[i].accordionContent = content;
+        }
+    }
+    /**
+     * handle resize Events
+     */
+    handleResize() {
+        const activeItems = document.querySelectorAll(this.options.selectors.activeContent + this.options.classes.active);
+
+        // resize open accordion items
+        for (let i = 0; i < activeItems.length; i += 1) {
+            activeItems[i].style.maxHeight = `${activeItems[i].scrollHeight}px`;
         }
     }
     /**
@@ -120,21 +145,14 @@ export class Accordion {
      */
     resetAccordion(accordion) {
         const triggers = accordion.querySelectorAll(this.options.selectors.trigger);
+        const contents = accordion.querySelectorAll(this.options.selectors.content);
 
         for (let i = 0; i < triggers.length; i += 1) {
-            const id = triggers[i].dataset.target;
-            let content = document.getElementById(id);
-
-            // if content is next dom element
-            if (!content) {
-                content = triggers[i].nextElementSibling;
-            }
-
             triggers[i].removeEventListener('click', this.triggerListener.bind(this));
+        }
 
-            if (content) {
-                content.style.maxHeight = '';
-            }
+        for (let i = 0; i < contents.length; i += 1) {
+            contents[i].style.maxHeight = '';
         }
     }
 }

@@ -17,7 +17,7 @@ $component: 'accordion';
 }
 
 // element
-.#{$component}__content-wrapper {
+.#{$component}__content {
     transition: max-height 0.25s ease;
     will-change: max-height;
     max-height: 0;
